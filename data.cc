@@ -23,6 +23,12 @@ bool more()
 extern "C"
 std::uint32_t next32()
 {
-	printf("data_next value: %u\n", value);
+	printf("data_next32 value: %u\n", value);
 	return value++;
+}
+
+extern "C"
+std::uint32_t write32(std::uint32_t v)
+{
+	printf("data_write32 v: %u\n", v);
 }

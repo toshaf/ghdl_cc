@@ -1,6 +1,5 @@
-library ieee.numeric_std;
+library ieee;
 use ieee.numeric_std.all;
-library ieee.std_logic_1164;
 use ieee.std_logic_1164.all;
 
 entity arp is
@@ -20,13 +19,16 @@ end arp;
 architecture arp_impl of arp is
 begin
 	process (clock) is
+		variable i : integer := 0;
 	begin
 		if rising_edge(clock) then
-			if rx then
-				txdata <= rxdata * rxdata;
-				tx <= true;
-			elsif
-				tx <= false;
+			tx <= '0';
+			if rx = '1' then
+				i := to_integer(rxdata(31 downto 0));
+				if i mod 2 = 0 then
+					txdata(63 downto 0) <= to_unsigned(i * i, 64);
+					tx <= '1';
+				end if;
 			end if;
 		end if;
 	end process;

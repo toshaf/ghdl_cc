@@ -1,4 +1,4 @@
-main: data.o data_cc.o main.o 
+main: data.o data_cc.o arp.o main.o
 	ghdl -e -Wl,-ldata_cc.o main
 
 data.o: data.vhdl

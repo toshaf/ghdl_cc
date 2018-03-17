@@ -10,6 +10,10 @@ package data is
 
 	function next32 return integer;
 	attribute foreign of next32 : function is "VHPIDIRECT next32";
+
+	-- should be a procedure but I can't get that to work under GHDL
+	function write32(v : integer) return integer;
+	attribute foreign of write32 : function is "VHPIDIRECT write32";
 end data;
 
 package body data is
@@ -27,4 +31,9 @@ package body data is
 	begin
 		assert false severity failure;
 	end next32;
+
+	function write32(v : integer) return integer is
+	begin
+		assert false severity failure;
+	end write32;
 end data;
