@@ -1,5 +1,5 @@
 main: main.o
-	ghdl -e -Wl,-ldata_cc.o main
+	ghdl -e -Wl,-ldata_cc.o -Wl,-lstdc++ main
 
 data.o: data.vhdl data_cc.o
 	ghdl -a data.vhdl

@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 #include <cstdint>
 
 std::uint32_t value;
@@ -8,7 +8,7 @@ bool init()
 {
 	value = 0;
 
-	printf("data_init\n");
+	std::cout << "data_init" << std::endl;
 
 	return true;
 }
@@ -16,19 +16,21 @@ bool init()
 extern "C"
 bool more()
 {
-	printf("data_more value: %u\n", value);
+	std::cout << (value < 10 ? "" : "no ") << "more available" << std::endl;
 	return value < 10;
 };
 
 extern "C"
 std::uint32_t next32()
 {
-	printf("data_next32 value: %u\n", value);
+	std::cout << "data_next32 value: " << value << std::endl;
 	return value++;
 }
 
 extern "C"
 std::uint32_t write32(std::uint32_t v)
 {
-	printf("data_write32 v: %u\n", v);
+	std::cout << "data_write32 v:" << v << std::endl;
+
+	return v;
 }
