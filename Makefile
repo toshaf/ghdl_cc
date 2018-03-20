@@ -8,7 +8,7 @@ arp.o: arp.vhdl
 	ghdl -a arp.vhdl
 
 data_cc.o: data.cc
-	g++ -c -o data_cc.o data.cc
+	g++ -std=c++11 -c -o data_cc.o data.cc
 
 main.o: main.vhdl data.o arp.o
 	ghdl -a main.vhdl

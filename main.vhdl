@@ -7,40 +7,63 @@ end;
 
 architecture main_impl of main is
 	signal clock, rx, tx : std_logic := '0';
-	signal rxdata, txdata : unsigned(63 downto 0);
+	signal rxdata, txdata : signed(63 downto 0);
 	constant EDGE : time := 3 ns; -- 6 ns clock cycle
 begin
 	dut : entity work.arp(arp_impl)
 	port map(clock => clock, rx => rx, rxdata => rxdata, tx => tx, txdata => txdata);
 
 	process is
-		variable i, a, d : integer := 0;
+		variable a, discard : integer := 0;
+		variable temp : signed(63 downto 0);
 	begin
 
 		if not work.data.init then
 			assert false report "failed to init" severity failure;
 		end if;
 
-		while work.data.more loop
-			i := work.data.next32;
+		while work.data.next_packet loop
 
-			rxdata(63 downto 32) <= to_unsigned(0, 32);
-			rxdata(31 downto 0) <= to_unsigned(i, 32);
-			rx <= '1';
+			while work.data.more loop
 
-			clock <= '1';
-			wait for EDGE;
+				rxdata <= signed(work.data.next64);
+				rx <= '1';
 
-			if tx = '1' then
-				a := to_integer(txdata);
-				d := work.data.write32(a);
-				assert false report "i: " & integer'image(i) & " a: " & integer'image(a) severity note;
-			else
-				assert false report "i: " & integer'image(i) & " no tx" severity note;
-			end if;
+				clock <= '1';
+				wait for EDGE;
 
-			clock <= '0';
-			wait for EDGE;
+				if tx = '1' then
+					a := to_integer(txdata(31 downto 0));
+					discard := work.data.write32(a);
+					a := to_integer(txdata(63 downto 32));
+					discard := work.data.write32(a);
+				end if;
+
+				clock <= '0';
+				wait for EDGE;
+			end loop;
+
+			-- clean up last of tx
+			loop
+				clock <= '1';
+				wait for EDGE;
+
+				if tx = '1' then
+					a := to_integer(txdata(31 downto 0));
+					discard := work.data.write32(a);
+					a := to_integer(txdata(63 downto 32));
+					discard := work.data.write32(a);
+				end if;
+
+				clock <= '0';
+				wait for EDGE;
+
+				if tx = '0' then
+					exit;
+				end if;
+
+			end loop;
+
 		end loop;
 
 		assert false report "done" severity note;
